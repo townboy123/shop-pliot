@@ -210,6 +210,7 @@ export interface AppConfig {
 
     /** 模型名，如 'gpt-4o-mini'。 */
     model: string;
+
     /**
      * OpenAI 兼容端点（自定义代理 / vLLM / Ollama / OneAPI 等的 base URL）。
      * 缺省（undefined）→ 使用 OpenAI 官方 API；仅 llmProvider=openai 时生效。
@@ -313,15 +314,38 @@ export interface RetrieverConfig {
  */
 
 /**
- * 布尔环境变量解析。
+ * 布尔环境变量解析（严格白名单版）。
  *
- * z.coerce.boolean 会把任意非空字符串（包括 'false'）当 true，
- * 因此这里显式白名单：仅 'false' / '0' / 'no' → false，其余非空 → true。
+ * 背景：z.coerce.boolean 会把任意非空字符串（包括 'false'）当 true，
+ * 因此这里手动解析，不使用 coerce。
+ *
+ * 解析规则：
+ * - undefined / null / 空字符串 → undefined（视为未设置，交给 .optional()）
+ * - 'true'  / '1' / 'yes' / 'on'  → true   （大小写不敏感，允许首尾空格）
+ * - 'false' / '0' / 'no' / 'off'  → false  （大小写不敏感，允许首尾空格）
+ * - 其余值 → 原样透传给 zod，由 z.boolean() 校验失败并在启动时抛出清晰错误
+ *
+ * 采用严格白名单而非“非空即 true”的宽松策略：
+ * 环境变量写错（如 LOG_LEVEL=ture）应在进程启动时立刻报错，
+ * 而不是被静默解析成 true 埋下隐患。
  */
-const booleanEnv = z.preprocess(
-    (v) => (v === undefined ? undefined : !(v === 'false' || v === '0' || v === 'no')),
-    z.boolean().optional()
-);
+const booleanEnv = z.preprocess((v) => {
+    // 未设置 / 显式 null / 空串：视为未提供，返回 undefined 走 optional 分支
+    if (v === undefined || v === null || v === '') return undefined;
+
+    // 归一化：转字符串、去首尾空格、转小写，' FALSE ' 和 'No' 也能正确识别
+    const s = String(v).trim().toLowerCase();
+
+    // truthy 白名单
+    if (['true', '1', 'yes', 'on'].includes(s)) return true;
+
+    // falsy 白名单
+    if (['false', '0', 'no', 'off'].includes(s)) return false;
+
+    // 非法值：透传原始字符串（非 boolean 类型），
+    // 让 z.boolean() 校验失败，zod 会报 "Expected boolean, received string"
+    return s;
+}, z.boolean().optional());
 
 /**
  * 环境变量 zod schema：只做"入口收口"校验与类型转换（字符串 → number/boolean）。

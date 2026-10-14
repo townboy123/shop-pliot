@@ -10,7 +10,10 @@
 
 /** 所有领域错误的基类：code 是稳定契约（HTTP 映射与日志检索依赖它） */
 export class DomainError extends Error {
-    constructor(message: string, public readonly code: string) {
+    constructor(
+        message: string,
+        public readonly code: string,
+    ) {
         super(message);
         this.name = new.target.name;
     }
