@@ -147,3 +147,11 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Environment Variables: Ignore real keys, retain examples
+.env
+.env.*.local
+
+# Business Data Catalog
+data/
+models/
