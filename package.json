@@ -1,0 +1,51 @@
+{
+    "name": "shoppilot",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "engines": {
+        "node": ">=20.6.0"
+    },
+    "scripts": {
+        "dev": "tsx watch --env-file=.env src/index.ts"
+    },
+    "dependencies": {
+        "@lancedb/lancedb": "^0.39.0",
+        "@langchain/core": "1.2.14",
+        "@langchain/langgraph": "1.4.19",
+        "@langchain/langgraph-checkpoint": "1.1.5",
+        "@langchain/langgraph-checkpoint-sqlite": "1.0.4",
+        "@langchain/openai": "^1.6.2",
+        "@modelcontextprotocol/sdk": "^1.32.1",
+        "@xenova/transformers": "^2.17.2",
+        "better-sqlite3": "^12.11.1",
+        "drizzle-orm": "^0.45.3",
+        "express": "^5.2.1",
+        "pino": "^10.4.0",
+        "zod": "4.6.5"
+    },
+    "devDependencies": {
+        "@types/better-sqlite3": "^9.6.0",
+        "@types/express": "^5.0.6",
+        "@types/node": "^24.0.0",
+        "@vitest/coverage-v8": "^5.0.3",
+        "drizzle-kit": "^0.31.11",
+        "tsx": "^4.23.15",
+        "typescript": "^5.9.3",
+        "vitest": "^5.0.3"
+    },
+    "overrides": {
+        "@langchain/core": "1.2.14",
+        "@langchain/langgraph": "1.4.19",
+        "@langchain/langgraph-checkpoint": "1.1.5",
+        "@langchain/langgraph-checkpoint-sqlite": "1.0.4",
+        "zod": "4.6.5"
+    },
+    "allowScripts": {
+        "better-sqlite3": true,
+        "sharp": true,
+        "esbuild": true,
+        "onnxruntime-node": true,
+        "protobufjs": true
+    }
+}
