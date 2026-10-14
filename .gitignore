@@ -161,3 +161,13 @@ models/
 
 # for idea
 .idea/
+
+# for database file
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# for lancedb
+data/lancedb/
+
