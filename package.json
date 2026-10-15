@@ -1,6 +1,6 @@
 {
     "name": "shoppilot",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "private": true,
     "type": "module",
     "engines": {
@@ -9,7 +9,13 @@
     "scripts": {
         "dev": "tsx watch --env-file=.env src/index.ts",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "tsx --env-file=.env scripts/migrate.ts",
+        "db:studio": "drizzle-kit studio",
+        "db:push": "drizzle-kit push",
+        "db:seed": "tsx --env-file=.env src/db/seed-cli.ts",
+        "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
     },
     "dependencies": {
         "@lancedb/lancedb": "^0.39.0",
