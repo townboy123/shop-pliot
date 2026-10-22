@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { McpServerConfig } from '../mcp/types.js';
+import type { McpServerConfig } from '../ports/types.js';
 import type { AgentMode, MemoryKind } from '../domain/types.js';
 
 // ---------------------------------------------------------------

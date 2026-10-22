@@ -139,3 +139,50 @@ export interface McpServerStatus {
     /** 连接失败原因（connected=false 时有值，运维排查入口）。 */
     error?: string;
 }
+
+/**
+ * MCP（Model Context Protocol）服务端口接口。
+ *
+ * 负责管理与多个 MCP Server 的连接生命周期、工具发现以及工具调用，
+ * 屏蔽底层传输细节（SSE / WebSocket / stdio 等），为上层提供统一的调用入口。
+ */
+export interface McpPort {
+    /**
+     * 建立所有已启用（enabled）的 MCP Server 连接。
+     *
+     * - 连接过程逐台进行，单台失败不会中断整体流程，也不会抛出异常
+     * - 失败信息会记入对应 `McpServerStatus.error` 字段，由调用方自行判断
+     *
+     * @returns 每台 Server 的连接状态列表（成功 / 失败均包含在内）
+     */
+    connect(): Promise<McpServerStatus[]>;
+
+    /**
+     * 拉取当前所有已连接 Server 的工具清单。
+     *
+     * 内部处理包含：
+     * - `qualifiedName` 规范化（避免多 Server 间工具重名冲突）
+     * - 按 `allowPrefixes` 白名单前缀过滤，仅保留允许调用的工具
+     *
+     * @returns 过滤后的工具描述符列表；无可用工具时返回空数组
+     */
+    listTools(): Promise<McpToolDescriptor[]>;
+
+    /**
+     * 调用指定 MCP 工具。
+     *
+     * @param input - 调用入参，包含目标工具标识及业务参数
+     * @returns 工具执行结果（含成功输出或错误信息）
+     * @throws 当目标 Server 未连接、工具不存在或调用超时时抛出错误
+     */
+    callTool(input: McpCallInput): Promise<McpCallResult>;
+
+    /**
+     * 关闭所有连接并释放底层资源。
+     *
+     * 调用后端口实例不应再使用；如需重新使用须先调用 {@link McpPort.connect}。
+     *
+     * @returns 资源释放完成后 resolve
+     */
+    close(): Promise<void>;
+}
