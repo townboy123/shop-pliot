@@ -1,0 +1,24 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        // 覆盖父配置：构建要产出文件
+        "noEmit": false,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "declaration": false,
+        "sourceMap": true
+    },
+    // 只编译 src，排除测试与脚本/配置
+    "include": ["src/**/*.ts"],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "data",
+        "scripts",
+        "drizzle.config.ts",
+        "vitest.config.ts",
+        "src/**/*.test.ts",
+        "src/**/*.spec.ts",
+        "src/**/__tests__/**"
+    ]
+}
